@@ -6,24 +6,33 @@ const kyokusRouter = Router();
 const prisma = new PrismaClient();
 
 // Get all Kyokus
-kyokusRouter.get("/kyokus", async (req, res) => {
-  const kyokus = await prisma.kyoku.findMany({
-    include: {
-      artist: {},
-    },
-  });
+kyokusRouter.get("/", async (req, res) => {
+  const kyokus = await getAllKyokus();
   res.json(kyokus);
 });
 
 // Create Kyoku
-kyokusRouter.post("/kyokus", async (req, res) => {
+kyokusRouter.post("/", async (req, res) => {
   if (!req.body.title || !req.body.artist_name) {
     res.json({ message: "request body parameter is invalid" });
   }
 
+  const kyoku = await createKyoku(req.body.title, req.body.artist_name);
+  res.json(kyoku);
+});
+
+async function getAllKyokus() {
+  return await prisma.kyoku.findMany({
+    include: {
+      artist: {},
+    },
+  });
+}
+
+async function createKyoku(title: string, artist_name: string) {
   const artist = await prisma.artist.findFirst({
     where: {
-      name: req.body.artist_name,
+      name: artist_name,
     },
   });
 
@@ -31,26 +40,26 @@ kyokusRouter.post("/kyokus", async (req, res) => {
   if (artist) {
     const kyoku = await prisma.kyoku.create({
       data: {
-        title: req.body.title,
+        title: title,
         artistId: artist.id,
       },
     });
-    res.json(kyoku);
+    return kyoku;
   } else {
     // else, create artist then create kyoku
     const artist = await prisma.artist.create({
       data: {
-        name: req.body.artist_name,
+        name: artist_name,
       },
     });
     const kyoku = await prisma.kyoku.create({
       data: {
-        title: req.body.title,
+        title: title,
         artistId: artist.id,
       },
     });
-    res.json(kyoku);
+    return kyoku;
   }
-});
+}
 
 export default kyokusRouter;

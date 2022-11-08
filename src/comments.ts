@@ -6,18 +6,13 @@ const commentsRouter = Router();
 const prisma = new PrismaClient();
 
 // Get all comments
-commentsRouter.get("/comments", async (req, res) => {
-  const comments = await prisma.comment.findMany({
-    include: {
-      kyoku: true,
-      author: true,
-    },
-  });
+commentsRouter.get("/", async (req, res) => {
+  const comments = await getAllComments();
   res.json(comments);
 });
 
 // Create comment
-commentsRouter.post("/comments", async (req, res) => {
+commentsRouter.post("/", async (req, res) => {
   if (!req.body.author_name || !req.body.kyoku_title || !req.body.body) {
     res.json({ message: "Invalid request body" });
   }
@@ -29,6 +24,15 @@ commentsRouter.post("/comments", async (req, res) => {
   );
   res.json(response);
 });
+
+async function getAllComments() {
+  return await prisma.comment.findMany({
+    include: {
+      kyoku: true,
+      author: true,
+    },
+  });
+}
 
 async function addComment(
   author_name: string,
