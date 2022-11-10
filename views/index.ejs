@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>KyokuShare</title>
+</head>
+
+    <body>
+        <h1>Home page</h1>
+        <div>
+            <% kyokus.forEach( kyoku => { %>
+                <div>
+                    <p>title:<%= kyoku.title %></p>
+                    <p>artist:<%= kyoku.artist.name %></p>
+                </div>
+            <% }) %>
+        </div>
+    </body>
+</html>
