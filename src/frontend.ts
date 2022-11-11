@@ -9,7 +9,7 @@ frontendRouter.get("/", async (req, res) => {
     res.render("./index.ejs", data);
 })
 
-frontendRouter.get("/comments/:id", async (req, res) => {
+frontendRouter.get("/commentsByKyokuId/:id", async (req, res) => {
     const comments = await getCommentsByKyokuId(Number(req.params.id));
     const data = {comments};
     res.render("./comments.ejs", data);
