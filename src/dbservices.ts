@@ -52,6 +52,18 @@ export async function getAllComments() {
   });
 }
 
+export async function getCommentsByKyokuId(id: number) {
+  return await prisma.comment.findMany({
+    where: {
+      kyokuId: id
+    },
+    include: {
+      kyoku: true,
+      author: true,
+    },
+  });
+}
+
 export async function addComment(
   author_name: string,
   kyoku_title: string,
