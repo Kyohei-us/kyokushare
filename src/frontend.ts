@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllComments, getAllKyokus, getCommentsByKyokuId } from "./dbservices";
+import { getAllComments, getAllKyokus, getArtistCommentsAuthorsByKyokuId, getCommentsByKyokuId } from "./dbservices";
 
 const frontendRouter = Router();
 
@@ -10,8 +10,11 @@ frontendRouter.get("/", async (req, res) => {
 })
 
 frontendRouter.get("/commentsByKyokuId/:id", async (req, res) => {
-    const comments = await getCommentsByKyokuId(Number(req.params.id));
-    const data = {comments};
+    const kyoku = await getArtistCommentsAuthorsByKyokuId(Number(req.params.id));
+    const data = {
+        kyoku,
+        comments: kyoku?.comments
+    };
     res.render("./comments.ejs", data);
 })
 

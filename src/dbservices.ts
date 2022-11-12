@@ -10,6 +10,17 @@ export async function getAllKyokus() {
   });
 }
 
+export async function getKyokusByArtistId(artistId:number) {
+  return await prisma.kyoku.findMany({
+    where: {
+      artistId: artistId
+    },
+    include: {
+      artist: {}
+    }
+  });
+}
+
 export async function createKyoku(title: string, artist_name: string) {
   const artist = await prisma.artist.findFirst({
     where: {
@@ -61,6 +72,22 @@ export async function getCommentsByKyokuId(id: number) {
       kyoku: true,
       author: true,
     },
+  });
+}
+
+export async function getArtistCommentsAuthorsByKyokuId(id: number) {
+  return await prisma.kyoku.findUnique({
+    where: {
+      id: id
+    },
+    include: {
+      artist: true,
+      comments: {
+        include: {
+          author: true
+        }
+      }
+    }
   });
 }
 

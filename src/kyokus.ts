@@ -1,13 +1,17 @@
-import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
-import { createKyoku, getAllKyokus } from "./dbservices";
+import { createKyoku, getAllKyokus, getKyokusByArtistId } from "./dbservices";
 
 const kyokusRouter = Router();
 
 // Get all Kyokus
 kyokusRouter.get("/", async (req, res) => {
-  const kyokus = await getAllKyokus();
-  res.json(kyokus);
+  if (req.query.artistId) {
+    const kyokus = await getKyokusByArtistId(Number(req.query.artistId));
+    res.json(kyokus);
+  } else {
+    const kyokus = await getAllKyokus();
+    res.json(kyokus);
+  }
 });
 
 // Create Kyoku
