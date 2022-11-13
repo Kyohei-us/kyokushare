@@ -17,11 +17,11 @@ kyokusRouter.get("/", async (req, res) => {
 // Create Kyoku
 kyokusRouter.post("/", async (req, res) => {
   if (!req.body.title || !req.body.artist_name) {
-    res.json({ message: "request body parameter is invalid" });
+    res.json({ message: "Invalid request body parameter" });
   }
 
   if (req.body.title === "" || req.body.artist_name === "") {
-    res.json({ message: "request body parameter is invalid" });
+    res.json({ message: "Invalid request body parameter" });
   }
 
   const kyoku = await createKyokuIfNotExists(req.body.title, req.body.artist_name);

@@ -10,18 +10,21 @@ export async function getAllKyokus() {
   });
 }
 
-export async function getKyokusByArtistId(artistId:number) {
+export async function getKyokusByArtistId(artistId: number) {
   return await prisma.kyoku.findMany({
     where: {
-      artistId: artistId
+      artistId: artistId,
     },
     include: {
-      artist: {}
-    }
+      artist: {},
+    },
   });
 }
 
-export async function createKyokuIfNotExists(title: string, artist_name: string) {
+export async function createKyokuIfNotExists(
+  title: string,
+  artist_name: string
+) {
   const artist = await prisma.artist.findFirst({
     where: {
       name: artist_name,
@@ -33,8 +36,8 @@ export async function createKyokuIfNotExists(title: string, artist_name: string)
     const kyokuIfExists = await prisma.kyoku.findFirst({
       where: {
         title: title,
-        artistId: artist.id
-      }
+        artistId: artist.id,
+      },
     });
 
     if (kyokuIfExists) {
@@ -78,7 +81,7 @@ export async function getAllComments() {
 export async function getCommentsByKyokuId(id: number) {
   return await prisma.comment.findMany({
     where: {
-      kyokuId: id
+      kyokuId: id,
     },
     include: {
       kyoku: true,
@@ -90,37 +93,71 @@ export async function getCommentsByKyokuId(id: number) {
 export async function getArtistCommentsAuthorsByKyokuId(id: number) {
   return await prisma.kyoku.findUnique({
     where: {
-      id: id
+      id: id,
     },
     include: {
       artist: true,
       comments: {
         include: {
-          author: true
-        }
-      }
-    }
+          author: true,
+        },
+      },
+    },
   });
 }
 
 export async function addComment(
   author_name: string,
   kyoku_title: string,
+  artist_name: string,
   body: string
 ) {
-  // get author (User)
-  const author = await findOrCreateAuthor(author_name);
-
   // get kyoku (Kyoku)
   const kyoku = await prisma.kyoku.findFirst({
     where: {
       title: kyoku_title,
+      artist: {
+        name: artist_name
+      }
+    },
+  });
+
+  if (!kyoku) {
+    return { message: "Kyoku with given title/artist name not found" };
+  }
+
+  // get author (User)
+  const author = await findOrCreateAuthor(author_name);
+
+  // create comment
+  const comment = await prisma.comment.create({
+    data: {
+      body: body,
+      authorId: author.id,
+      kyokuId: kyoku.id,
+    },
+  });
+  return comment;
+}
+
+export async function addCommentByKyokuId(
+  author_name: string,
+  kyoku_id: number,
+  body: string
+) {
+  // get kyoku (Kyoku)
+  const kyoku = await prisma.kyoku.findUnique({
+    where: {
+      id: kyoku_id,
     },
   });
 
   if (!kyoku) {
     return { message: "Kyoku with given title not found" };
   }
+
+  // get author (User)
+  const author = await findOrCreateAuthor(author_name);
 
   // create comment
   const comment = await prisma.comment.create({
