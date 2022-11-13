@@ -9,7 +9,14 @@ commentsRouter.get("/", async (req, res) => {
   res.json(comments);
 });
 
-// Create comment
+/**
+* Create comment
+* if kyoku id is specified,
+* try to add comment by kyoku id
+* else if kyoku title AND artist name is specified,
+* try to add comment by title and name
+* else Invalid request
+*/
 commentsRouter.post("/", async (req, res) => {
   if (req.body.author_name && req.body.kyoku_id && req.body.body) {
     const response = await addCommentByKyokuId(
