@@ -18,17 +18,12 @@ commentsRouter.post("/", async (req, res) => {
       req.body.body
     );
     res.json(response);
-  }
-  else if (!req.body.author_name || !req.body.kyoku_title || !req.body.artist_name || !req.body.body) {
-    res.json({ message: "Invalid request body parameter" });
   } else if (
-    req.body.author_name === "" ||
-    req.body.kyoku_title === "" ||
-    req.body.artist_name === "" ||
-    req.body.body === ""
+    req.body.author_name &&
+    req.body.kyoku_title &&
+    req.body.artist_name &&
+    req.body.body
   ) {
-    res.json({ message: "Invalid request body parameter" });
-  } else {
     const response = await addComment(
       req.body.author_name,
       req.body.kyoku_title,
@@ -36,6 +31,8 @@ commentsRouter.post("/", async (req, res) => {
       req.body.body
     );
     res.json(response);
+  } else {
+    res.json({ message: "Invalid request body parameter" });
   }
 });
 

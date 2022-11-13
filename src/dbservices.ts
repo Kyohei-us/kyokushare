@@ -153,7 +153,7 @@ export async function addCommentByKyokuId(
   });
 
   if (!kyoku) {
-    return { message: "Kyoku with given title not found" };
+    return { message: "Kyoku with given id not found" };
   }
 
   // get author (User)
