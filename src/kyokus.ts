@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createKyoku, getAllKyokus, getKyokusByArtistId } from "./dbservices";
+import { createKyokuIfNotExists, getAllKyokus, getKyokusByArtistId } from "./dbservices";
 
 const kyokusRouter = Router();
 
@@ -20,7 +20,7 @@ kyokusRouter.post("/", async (req, res) => {
     res.json({ message: "request body parameter is invalid" });
   }
 
-  const kyoku = await createKyoku(req.body.title, req.body.artist_name);
+  const kyoku = await createKyokuIfNotExists(req.body.title, req.body.artist_name);
   res.json(kyoku);
 });
 

@@ -21,7 +21,7 @@ export async function getKyokusByArtistId(artistId:number) {
   });
 }
 
-export async function createKyoku(title: string, artist_name: string) {
+export async function createKyokuIfNotExists(title: string, artist_name: string) {
   const artist = await prisma.artist.findFirst({
     where: {
       name: artist_name,
@@ -30,6 +30,18 @@ export async function createKyoku(title: string, artist_name: string) {
 
   // if artist already exists, create kyoku with it
   if (artist) {
+    const kyokuIfExists = await prisma.kyoku.findFirst({
+      where: {
+        title: title,
+        artistId: artist.id
+      }
+    });
+
+    if (kyokuIfExists) {
+      return kyokuIfExists;
+    }
+
+    // If Kyoku not exists
     const kyoku = await prisma.kyoku.create({
       data: {
         title: title,
