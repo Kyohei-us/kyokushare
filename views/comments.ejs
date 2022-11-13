@@ -36,16 +36,58 @@
             .then((response) => response.json())
             .then((data) => {
                 console.log('Success:', data);
-                // $("#kyokuCreateSuccessModal").modal('show');
+                $("#commentCreateSuccessModal").modal('show');
             })
             .catch((error) => {
                 console.error('Error:', error);
-                // $("#kyokuCreateFailedModal").modal('show');
+                $("#commentCreateFailedModal").modal('show');
             });
+    }
+
+    function refreshPage() {
+        location.reload();
     }
 </script>
 
 <body>
+    <div id="commentCreateSuccessModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Comment Creation Successful!</h5>
+                    <button type="button" class="close" onclick="refreshPage()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>New Comment is successfully created!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="refreshPage()">OK!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="commentCreateFailedModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Comment Creation Failed!</h5>
+                    <button type="button" class="close" onclick="refreshPage()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>New Comment creation failed. Please make sure all fields are properly filled out.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="refreshPage()">OK!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <h1 class="position-absolute start-50 translate-middle-x">Kyoku information</h1>
     <section class="py-5 text-center">
         <div class="container">

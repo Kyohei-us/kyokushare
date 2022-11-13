@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllComments, getAllKyokus, getArtistCommentsAuthorsByKyokuId, getCommentsByKyokuId } from "./dbservices";
+import { getAllKyokus, getArtistCommentsAuthorsByKyokuId } from "./dbservices";
 
 const frontendRouter = Router();
 
