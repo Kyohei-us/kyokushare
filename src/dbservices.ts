@@ -7,7 +7,11 @@ export async function getAllKyokus() {
   return await prisma.kyoku.findMany({
     include: {
       artist: true,
-      comments: true
+      comments: {
+        include: {
+          reputation: true
+        }
+      }
     },
   });
 }
