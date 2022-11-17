@@ -37,12 +37,22 @@ model User {
 }
 
 model Comment {
+  id         Int         @id @default(autoincrement())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  body       String      @db.VarChar(255)
+  author     User        @relation(fields: [authorId], references: [id])
+  authorId   Int
+  kyoku      Kyoku       @relation(fields: [kyokuId], references: [id])
+  kyokuId    Int
+  reputation Reputation?
+}
+
+model Reputation {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  body      String   @db.VarChar(255)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  kyoku     Kyoku    @relation(fields: [kyokuId], references: [id])
-  kyokuId   Int
+  points    Int
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  commentId Int      @unique
 }

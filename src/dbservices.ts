@@ -2,14 +2,17 @@ import { PrismaClient, User } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+// Read
 export async function getAllKyokus() {
   return await prisma.kyoku.findMany({
     include: {
-      artist: {},
+      artist: true,
+      comments: true
     },
   });
 }
 
+// Read
 export async function getKyokusByArtistId(artistId: number) {
   return await prisma.kyoku.findMany({
     where: {
@@ -21,6 +24,8 @@ export async function getKyokusByArtistId(artistId: number) {
   });
 }
 
+// Create? Artist
+// Create? Kyoku
 export async function createKyokuIfNotExists(
   title: string,
   artist_name: string
@@ -69,15 +74,41 @@ export async function createKyokuIfNotExists(
   }
 }
 
+// Read
+// Create? Reputation
 export async function getAllComments() {
+  const comments = await prisma.comment.findMany({
+    include: {
+      kyoku: true,
+      author: true,
+      reputation: true,
+    },
+  });
+
+  // If comment does not have reputation,
+  // init reputation
+  for (let i = 0; i < comments.length; i++) {
+    const comment = comments[i];
+    if (!comment.reputation) {
+      await prisma.reputation.create({
+        data: {
+          points: 0,
+          commentId: comment.id,
+        },
+      });
+    }
+  }
+
   return await prisma.comment.findMany({
     include: {
       kyoku: true,
       author: true,
+      reputation: true,
     },
   });
 }
 
+// Read
 export async function getCommentsByKyokuId(id: number) {
   return await prisma.comment.findMany({
     where: {
@@ -86,11 +117,13 @@ export async function getCommentsByKyokuId(id: number) {
     include: {
       kyoku: true,
       author: true,
+      reputation: true,
     },
   });
 }
 
-export async function getArtistCommentsAuthorsByKyokuId(id: number) {
+// Read
+export async function getKyokuFullInfoByKyokuId(id: number) {
   return await prisma.kyoku.findUnique({
     where: {
       id: id,
@@ -100,12 +133,16 @@ export async function getArtistCommentsAuthorsByKyokuId(id: number) {
       comments: {
         include: {
           author: true,
+          reputation: true,
         },
       },
     },
   });
 }
 
+// Create? User
+// Create? Comment
+// Create? Reputation
 export async function addComment(
   author_name: string,
   kyoku_title: string,
@@ -117,8 +154,8 @@ export async function addComment(
     where: {
       title: kyoku_title,
       artist: {
-        name: artist_name
-      }
+        name: artist_name,
+      },
     },
   });
 
@@ -130,16 +167,35 @@ export async function addComment(
   const author = await findOrCreateAuthor(author_name);
 
   // create comment
-  const comment = await prisma.comment.create({
+  const commentTemp = await prisma.comment.create({
     data: {
       body: body,
       authorId: author.id,
       kyokuId: kyoku.id,
     },
   });
+
+  const reputation = await prisma.reputation.create({
+    data: {
+      points: 0,
+      commentId: commentTemp.id,
+    },
+  });
+
+  const comment = await prisma.comment.findUnique({
+    where: {
+      id: commentTemp.id,
+    },
+    include: {
+      reputation: true,
+    },
+  });
   return comment;
 }
 
+// Create? User
+// Create? Comment
+// Create? Reputation
 export async function addCommentByKyokuId(
   author_name: string,
   kyoku_id: number,
@@ -160,16 +216,33 @@ export async function addCommentByKyokuId(
   const author = await findOrCreateAuthor(author_name);
 
   // create comment
-  const comment = await prisma.comment.create({
+  const commentTemp = await prisma.comment.create({
     data: {
       body: body,
       authorId: author.id,
       kyokuId: kyoku.id,
     },
   });
+
+  const reputation = await prisma.reputation.create({
+    data: {
+      points: 0,
+      commentId: commentTemp.id,
+    },
+  });
+
+  const comment = await prisma.comment.findUnique({
+    where: {
+      id: commentTemp.id,
+    },
+    include: {
+      reputation: true,
+    },
+  });
   return comment;
 }
 
+// Create? User
 export async function findOrCreateAuthor(author_name: string): Promise<User> {
   const author = await prisma.user.findFirst({
     where: {

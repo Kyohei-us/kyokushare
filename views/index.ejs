@@ -97,8 +97,7 @@
                                 <p class="card-text">by <%= kyoku.artist.name %></p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="btn-group">
-                                        <a href="/commentsByKyokuId/<%= kyoku.id %>"><button type="button" class="btn btn-sm btn-primary text-bg-primary" >View comments</button></a>
-                                        <button type="button" class="btn btn-sm btn-secondary text-bg-secondary">Edit</button>
+                                        <a href="/commentsByKyokuId/<%= kyoku.id %>"><button type="button" class="btn btn-sm btn-primary text-bg-primary" >View comments (<%= kyoku.comments.length %>)</button></a>
                                     </div>
                                 </div>
                             </div>

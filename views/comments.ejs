@@ -44,6 +44,15 @@
             });
     }
 
+    function increaseReputationPoints(commentId) {
+        /**
+         * TODO: Call API to increase Reputation Points 
+         */
+
+        let currPoints = Number($("#ReputationPoints" + String(commentId)).text());
+        $("#ReputationPoints" + String(commentId)).text(String(currPoints + 1));
+    }
+
     function refreshPage() {
         location.reload();
     }
@@ -104,18 +113,13 @@
     <div class="album py-5 bg-light">
         <div class="container">
             <div class="row">
-                <% comments.forEach( comment => { %>
+                <% comments.sort((a, b) => b.reputation.points - a.reputation.points).forEach( comment => { %>
                     <div class="col-md-4">
                         <div class="card mb-4 box-shadow text-bg-info">
                         <!-- <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap"> -->
                             <div class="card-body">
                                 <h3 class="card-text"><%= comment.body %></h3>
-                                <p class="card-text">by <%= comment.author.name %></p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-sm btn-primary text-bg-primary">Edit</button>
-                                    </div>
-                                </div>
+                                <p class="card-text">by <%= comment.author.name %><span> <span onclick="increaseReputationPoints('<%= comment.id %>')">💟</span>: <span id="ReputationPoints<%= comment.id %>"><%= comment.reputation.points %></span></span></p>
                             </div>
                         </div>
                     </div>
