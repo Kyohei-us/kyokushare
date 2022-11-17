@@ -44,13 +44,24 @@
             });
     }
 
-    function increaseReputationPoints(commentId) {
-        /**
-         * TODO: Call API to increase Reputation Points 
-         */
-
-        let currPoints = Number($("#ReputationPoints" + String(commentId)).text());
-        $("#ReputationPoints" + String(commentId)).text(String(currPoints + 1));
+    async function increaseReputationPoints(commentId) {
+        const data = {};
+        fetch('/api/comments/increment-reputation/'+commentId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.json())
+            .then((reputation) => {
+                console.log('Success:', reputation);
+                let currPoints = Number($("#ReputationPoints" + String(commentId)).text());
+                $("#ReputationPoints" + String(commentId)).text(String(currPoints + 1));
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     }
 
     function refreshPage() {

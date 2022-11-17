@@ -259,3 +259,34 @@ export async function findOrCreateAuthor(author_name: string): Promise<User> {
     });
   }
 }
+
+export async function incrementReputationByCommentId(commentId: number) {
+  const reputation = await prisma.reputation.update({
+    where: {
+      commentId: commentId
+    },
+    data: {
+      points: {
+        increment: 1
+      }
+    }
+  });
+
+  return reputation;
+}
+
+// Update Reputation
+async function incrementReputationById(reputationId: number) {
+  const reputation = await prisma.reputation.update({
+    where: {
+      id: reputationId
+    },
+    data: {
+      points: {
+        increment: 1
+      }
+    }
+  });
+
+  return reputation;
+} 

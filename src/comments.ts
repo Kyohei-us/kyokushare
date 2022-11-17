@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addComment, addCommentByKyokuId, getAllComments } from "./dbservices";
+import { addComment, addCommentByKyokuId, getAllComments, incrementReputationByCommentId } from "./dbservices";
 
 const commentsRouter = Router();
 
@@ -42,5 +42,10 @@ commentsRouter.post("/", async (req, res) => {
     res.json({ message: "Invalid request body parameter" });
   }
 });
+
+commentsRouter.post("/increment-reputation/:commentId", async (req, res) => {
+  const reputation = await incrementReputationByCommentId(Number(req.params.commentId));
+  res.json(reputation);
+})
 
 export default commentsRouter;
