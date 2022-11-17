@@ -294,3 +294,24 @@ async function incrementReputationById(reputationId: number) {
 
   return reputation;
 } 
+
+export async function getArtistById(artistId: number) {
+  const artist = await prisma.artist.findUnique({
+    where: {
+      id: artistId
+    },
+    include: {
+      kyokus: {
+        include: {
+          comments: {
+            include: {
+              reputation: true
+            }
+          }
+        }
+      }
+    }
+  });
+
+  return artist;
+}

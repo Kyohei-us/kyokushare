@@ -46,7 +46,7 @@
 
     async function increaseReputationPoints(commentId) {
         const data = {};
-        fetch('/api/comments/increment-reputation/'+commentId, {
+        fetch('/api/comments/increment-reputation/' + commentId, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -110,33 +110,37 @@
 
     <a href="/">Go to Home</a>
 
-    <h1 class="position-absolute start-50 translate-middle-x">Kyoku information</h1>
-    <section class="py-5 text-center">
-        <div class="container">
-            <h3>
-                <%= kyoku.artist.name %>
-            </h3>
-            <p class="lead text-muted">
-                <%= kyoku.title %>
-            </p>
-        </div>
-    </section>
+    <div class="bg-light">
+        <h1 class="position-absolute start-50 translate-middle-x">Kyoku information</h1>
+        <section class="py-5 text-center">
+            <div class="container">
+                <h3>
+                    <%= kyoku.artist.name %>
+                </h3>
+                <p class="lead text-muted">
+                    <%= kyoku.title %>
+                </p>
+            </div>
+        </section>
+    </div>
 
-    <h2 class="position-absolute start-50 translate-middle-x">Comments</h2>
-    <div class="album py-5 bg-light">
-        <div class="container">
-            <div class="row">
-                <% comments.sort((a, b) => b.reputation.points - a.reputation.points).forEach( comment => { %>
-                    <div class="col-md-4">
-                        <div class="card mb-4 box-shadow text-bg-info">
-                        <!-- <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap"> -->
-                            <div class="card-body">
-                                <h3 class="card-text"><%= comment.body %></h3>
-                                <p class="card-text">by <%= comment.author.name %><span> <span onclick="increaseReputationPoints('<%= comment.id %>')">💟</span>: <span id="ReputationPoints<%= comment.id %>"><%= comment.reputation.points %></span></span></p>
+    <div class="bg-light">
+        <h2 class="position-absolute start-50 translate-middle-x">Comments</h2>
+        <div class="album py-5">
+            <div class="container">
+                <div class="row row-cols-1">
+                    <% comments.sort((a, b) => b.reputation.points - a.reputation.points).forEach( comment => { %>
+                        <div class="col col-md-8 offset-md-2">
+                            <div class="card mb-4 box-shadow text-bg-dark">
+                            <!-- <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap"> -->
+                                <div class="card-body">
+                                    <h3 class="card-text"><%= comment.body %></h3>
+                                    <p class="card-text">by <%= comment.author.name %><span> <span onclick="increaseReputationPoints('<%= comment.id %>')">💟</span>: <span id="ReputationPoints<%= comment.id %>"><%= comment.reputation.points %></span></span></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <% }) %>
+                    <% }) %>
+                </div>
             </div>
         </div>
     </div>
