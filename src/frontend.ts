@@ -4,7 +4,9 @@ import { getAllKyokus, getArtistById, getKyokuFullInfoByKyokuId } from "./dbserv
 const frontendRouter = Router();
 
 frontendRouter.get("/", async (req, res) => {
-    const kyokus = await getAllKyokus();
+    const skip = req.query.skip ? Number(req.query.skip) : 0;
+    const take = req.query.take ? Number(req.query.take) : undefined;
+    const kyokus = await getAllKyokus(skip, take);
     const data = {kyokus};
     res.render("./index.ejs", data);
 })

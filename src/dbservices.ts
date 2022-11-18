@@ -3,8 +3,10 @@ import { PrismaClient, User } from "@prisma/client";
 const prisma = new PrismaClient();
 
 // Read
-export async function getAllKyokus() {
+export async function getAllKyokus(skip?: number, take?: number) {
   return await prisma.kyoku.findMany({
+    skip,
+    take,
     include: {
       artist: true,
       comments: {
