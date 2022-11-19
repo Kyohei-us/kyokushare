@@ -70,97 +70,120 @@
 </script>
 
 <body>
-    <div id="commentCreateSuccessModal" class="modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Comment Creation Successful!</h5>
-                    <button type="button" class="close" onclick="refreshPage()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>New Comment is successfully created!</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="refreshPage()">OK!</button>
-                </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">ここにロゴ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#myNavbar"
+                aria-controls="myNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item active"><a class="nav-link active" href="/">Home</a></li>
+                    <!--<li class="nav-item"><a class="nav-link" href="#">Comments</a></li> -->
+                </ul>
             </div>
         </div>
-    </div>
+    </nav>
 
-    <div id="commentCreateFailedModal" class="modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Comment Creation Failed!</h5>
-                    <button type="button" class="close" onclick="refreshPage()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>New Comment creation failed. Please make sure all fields are properly filled out.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="refreshPage()">OK!</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="container-fluid text-center">
+        <div class="row content">
+            <!-- Center area -->
+            <div class="col-sm-12 text-left">
 
-    <a href="/">Go to Home</a>
-
-    <div class="bg-light">
-        <h1 class="position-absolute start-50 translate-middle-x">Kyoku information</h1>
-        <section class="py-5 text-center">
-            <div class="container">
-                <h3>
-                    <%= kyoku.artist.name %>
-                </h3>
-                <p class="lead text-muted">
-                    <%= kyoku.title %>
-                </p>
-            </div>
-        </section>
-    </div>
-
-    <div class="bg-light">
-        <h2 class="position-absolute start-50 translate-middle-x">Comments</h2>
-        <div class="album py-5">
-            <div class="container">
-                <div class="row row-cols-1">
-                    <% comments.sort((a, b) => b.reputation.points - a.reputation.points).forEach( comment => { %>
-                        <div class="col col-md-8 offset-md-2">
-                            <div class="card mb-4 box-shadow text-bg-dark">
-                            <!-- <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap"> -->
-                                <div class="card-body">
-                                    <h3 class="card-text"><%= comment.body %></h3>
-                                    <p class="card-text">by <%= comment.author.name %><span> <span onclick="increaseReputationPoints('<%= comment.id %>')">💟</span>: <span id="ReputationPoints<%= comment.id %>"><%= comment.reputation.points %></span></span></p>
-                                </div>
+                <div id="commentCreateSuccessModal" class="modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">コメントが作成されました！</h5>
+                                <button type="button" class="close" onclick="refreshPage()" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>新しいコメントが作成されました！</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="refreshPage()">OK!</button>
                             </div>
                         </div>
-                    <% }) %>
+                    </div>
+                </div>
+
+                <div id="commentCreateFailedModal" class="modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">コメントの作成中にエラーが発生しました。</h5>
+                                <button type="button" class="close" onclick="refreshPage()" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>コメントの作成中にエラーが発生しました。入力忘れなどが無いかどうか確認してください。</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="refreshPage()">OK!</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-light">
+                    <h1 class="position-absolute start-50 translate-middle-x">曲情報</h1>
+                    <section class="py-5 text-center">
+                        <div class="container">
+                            <h3>
+                                <%= kyoku.artist.name %>
+                            </h3>
+                            <p class="lead text-muted">
+                                <%= kyoku.title %>
+                            </p>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="bg-light">
+                    <h2 class="position-absolute start-50 translate-middle-x">コメント</h2>
+                    <div class="album py-5">
+                        <div class="container">
+                            <div class="row row-cols-1">
+                                <% comments.sort((a, b) => b.reputation.points - a.reputation.points).forEach( comment => { %>
+                                    <div class="col col-md-8 offset-md-2">
+                                        <div class="card mb-4 box-shadow text-bg-dark">
+                                        <!-- <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap"> -->
+                                            <div class="card-body">
+                                                <h3 class="card-text"><%= comment.body %></h3>
+                                                <p class="card-text">by <%= comment.author.name %><span> <span onclick="increaseReputationPoints('<%= comment.id %>')">💟</span>: <span id="ReputationPoints<%= comment.id %>"><%= comment.reputation.points %></span></span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-light">
+                    <!-- Kyoku Id is auto-filled and readonly -->
+                    <div class="mb-3 mx-auto w-50">
+                        <label for="kyokuIdInput" class="form-label">曲のId</label>
+                        <input type="number" class="form-control" id="kyokuIdInput" value="<%= kyoku.id %>" readonly />
+                    </div>
+                    <div class="mb-3 mx-auto w-50">
+                        <label for="authorNameInput" class="form-label">あなたの名前</label>
+                        <input type="text" class="form-control" id="authorNameInput" />
+                    </div>
+                    <div class="mb-3 mx-auto w-50">
+                        <label for="commentBodyInput" class="form-label">コメント本文</label>
+                        <input type="text" class="form-control" id="commentBodyInput" />
+                    </div>
+                    <div class="mb-3 mx-auto text-center">
+                        <button type="button" class="btn btn-primary mb-3" onclick="createCommentOnSubmit()" >コメントを作成する</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="bg-light">
-        <!-- Kyoku Id is auto-filled and readonly -->
-        <div class="mb-3 mx-auto w-50">
-            <label for="kyokuIdInput" class="form-label">Kyoku Id</label>
-            <input type="number" class="form-control" id="kyokuIdInput" value="<%= kyoku.id %>" readonly />
-        </div>
-        <div class="mb-3 mx-auto w-50">
-            <label for="authorNameInput" class="form-label">Your Name</label>
-            <input type="text" class="form-control" id="authorNameInput" />
-        </div>
-        <div class="mb-3 mx-auto w-50">
-            <label for="commentBodyInput" class="form-label">Comment Body</label>
-            <input type="text" class="form-control" id="commentBodyInput" />
-        </div>
-        <div class="mb-3 mx-auto text-center">
-            <button type="button" class="btn btn-primary mb-3" onclick="createCommentOnSubmit()" >Create new Comment</button>
         </div>
     </div>
 
