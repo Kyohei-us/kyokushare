@@ -50,7 +50,7 @@
 
 <body>
     <!-- Navbar -->
-    <%- include('component/navbar.ejs')  %> 
+    <%- include('component/navbar.ejs', {loggedIn: username ? true : false})  %> 
 
     <!-- Main contents -->
     <div class="container-fluid text-center">
