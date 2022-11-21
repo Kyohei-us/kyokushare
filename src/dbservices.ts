@@ -1,4 +1,5 @@
 import { PrismaClient, User } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -11,9 +12,9 @@ export async function getAllKyokus(skip?: number, take?: number) {
       artist: true,
       comments: {
         include: {
-          reputation: true
-        }
-      }
+          reputation: true,
+        },
+      },
     },
   });
 }
@@ -171,6 +172,9 @@ export async function addComment(
 
   // get author (User)
   const author = await findOrCreateAuthor(author_name);
+  if (!author) {
+    return { message: "Author with the name not found" };
+  }
 
   // create comment
   const commentTemp = await prisma.comment.create({
@@ -220,6 +224,9 @@ export async function addCommentByKyokuId(
 
   // get author (User)
   const author = await findOrCreateAuthor(author_name);
+  if (!author) {
+    return { message: "Author with the name not found" };
+  }
 
   // create comment
   const commentTemp = await prisma.comment.create({
@@ -249,7 +256,9 @@ export async function addCommentByKyokuId(
 }
 
 // Create? User
-export async function findOrCreateAuthor(author_name: string): Promise<User> {
+export async function findOrCreateAuthor(
+  author_name: string
+): Promise<User | undefined> {
   const author = await prisma.user.findFirst({
     where: {
       name: author_name,
@@ -258,24 +267,60 @@ export async function findOrCreateAuthor(author_name: string): Promise<User> {
   if (author) {
     return author;
   } else {
-    return await prisma.user.create({
+    return undefined;
+  }
+}
+
+export async function signUpUser(username: string, password: string) {
+  const saltRounds = 5;
+  try {
+    const user = await prisma.user.create({
       data: {
-        name: author_name,
+        name: username,
       },
     });
+    const userAuth = await prisma.userAuth.create({
+      data: {
+        userId: user.id,
+        hashedPassword: bcrypt.hashSync(password, saltRounds),
+      },
+    });
+    const userRet = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+      include: {
+        userAuth: true,
+      },
+    });
+
+    return userRet;
+  } catch (e) {
+    return "error";
   }
+}
+
+export async function findUserByName(username: string) {
+  return await prisma.user.findUnique({
+    where: {
+      name: username,
+    },
+    include: {
+      userAuth: true,
+    },
+  });
 }
 
 export async function incrementReputationByCommentId(commentId: number) {
   const reputation = await prisma.reputation.update({
     where: {
-      commentId: commentId
+      commentId: commentId,
     },
     data: {
       points: {
-        increment: 1
-      }
-    }
+        increment: 1,
+      },
+    },
   });
 
   return reputation;
@@ -285,34 +330,34 @@ export async function incrementReputationByCommentId(commentId: number) {
 async function incrementReputationById(reputationId: number) {
   const reputation = await prisma.reputation.update({
     where: {
-      id: reputationId
+      id: reputationId,
     },
     data: {
       points: {
-        increment: 1
-      }
-    }
+        increment: 1,
+      },
+    },
   });
 
   return reputation;
-} 
+}
 
 export async function getArtistById(artistId: number) {
   const artist = await prisma.artist.findUnique({
     where: {
-      id: artistId
+      id: artistId,
     },
     include: {
       kyokus: {
         include: {
           comments: {
             include: {
-              reputation: true
-            }
-          }
-        }
-      }
-    }
+              reputation: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   return artist;

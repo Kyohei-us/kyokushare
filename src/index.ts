@@ -1,10 +1,11 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import kyokusRouter from "./kyokus";
 import commentsRouter from "./comments";
 import frontendRouter from "./frontend";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import jwt from "jsonwebtoken";
 
 declare global {
   namespace Express {
@@ -17,8 +18,23 @@ declare global {
 
 declare module 'express-session' {
   interface SessionData {
-      username: string
+      username: string;
+      token: string;
   }
+}
+
+export function isAuthenticated(req: Request, res: Response, next: NextFunction) {
+  const bearToken = req.headers["authorization"];
+  const bearer = bearToken?.split(" ");
+  const token = bearer && bearer[1] ? bearer[1] : "";
+
+  jwt.verify(token, process.env.JWT_SECRET ? process.env.JWT_SECRET : "", (error, username) => {
+    if (error) {
+      return res.json({message: "Not authenticated."});
+    } else {
+      return next();
+    }
+  });
 }
 
 const app = express();
@@ -42,6 +58,10 @@ app.use("/api/kyokus", kyokusRouter);
 app.use("/api/comments", commentsRouter);
 
 app.use("/", frontendRouter);
+
+app.get("/isLoggedIn", isAuthenticated, async (req, res) => {
+  res.json({message: "You are logged in!"})
+})
 
 app.get("/", async (req, res) => {
   res.json({ message: "Home Page" });
