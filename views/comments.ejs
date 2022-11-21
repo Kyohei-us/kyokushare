@@ -159,7 +159,11 @@
                     </div>
                     <div class="mb-3 mx-auto w-50">
                         <label for="authorNameInput" class="form-label">あなたの名前</label>
+                        <% if (username) { %> 
+                        <input type="text" class="form-control" id="authorNameInput" value="<%= username %>" readonly />
+                        <% } else { %>
                         <input type="text" class="form-control" id="authorNameInput" />
+                        <% } %> 
                     </div>
                     <div class="mb-3 mx-auto w-50">
                         <label for="commentBodyInput" class="form-label">コメント本文</label>
