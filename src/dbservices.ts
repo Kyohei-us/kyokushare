@@ -300,6 +300,11 @@ export async function signUpUser(username: string, password: string) {
   }
 }
 
+export async function deleteAllUsers() {
+  await prisma.user.deleteMany();
+  return true;
+}
+
 export async function findUserByName(username: string) {
   return await prisma.user.findUnique({
     where: {

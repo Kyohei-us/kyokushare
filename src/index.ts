@@ -6,6 +6,7 @@ import session from "express-session";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import jwt from "jsonwebtoken";
+import { deleteAllUsers } from "./dbservices";
 
 declare global {
   namespace Express {
@@ -61,6 +62,10 @@ app.use("/", frontendRouter);
 
 app.get("/isLoggedIn", isAuthenticated, async (req, res) => {
   res.json({message: "You are logged in!"})
+})
+
+app.get("/deleteAllUsers", async (req, res) => {
+  res.json({message: "Delete all users result: " + deleteAllUsers()});
 })
 
 app.get("/", async (req, res) => {
