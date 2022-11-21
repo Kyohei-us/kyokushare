@@ -29,6 +29,8 @@ frontendRouter.get("/commentsByKyokuId/:id", async (req, res) => {
   const data = {
     kyoku,
     comments: kyoku?.comments,
+    username: req.session.username,
+    token: req.session.token,
   };
   res.render("./comments.ejs", data);
 });
