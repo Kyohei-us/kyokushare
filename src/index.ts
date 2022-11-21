@@ -65,7 +65,7 @@ app.get("/isLoggedIn", isAuthenticated, async (req, res) => {
 })
 
 app.get("/deleteAllUsers", async (req, res) => {
-  res.json({message: "Delete all users result: " + deleteAllUsers()});
+  res.json({message: "Delete all users result: " + await deleteAllUsers()});
 })
 
 app.get("/", async (req, res) => {

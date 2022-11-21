@@ -301,7 +301,9 @@ export async function signUpUser(username: string, password: string) {
 }
 
 export async function deleteAllUsers() {
-  await prisma.user.deleteMany();
+  await prisma.comment.deleteMany({});
+  await prisma.userAuth.deleteMany({});
+  await prisma.user.deleteMany({});
   return true;
 }
 
