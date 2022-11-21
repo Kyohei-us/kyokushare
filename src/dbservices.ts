@@ -171,7 +171,7 @@ export async function addComment(
   }
 
   // get author (User)
-  const author = await findOrCreateAuthor(author_name);
+  const author = await findAuthor(author_name);
   if (!author) {
     return { message: "Author with the name not found" };
   }
@@ -223,7 +223,7 @@ export async function addCommentByKyokuId(
   }
 
   // get author (User)
-  const author = await findOrCreateAuthor(author_name);
+  const author = await findAuthor(author_name);
   if (!author) {
     return { message: "Author with the name not found" };
   }
@@ -255,8 +255,8 @@ export async function addCommentByKyokuId(
   return comment;
 }
 
-// Create? User
-export async function findOrCreateAuthor(
+// Read User
+async function findAuthor(
   author_name: string
 ): Promise<User | undefined> {
   const author = await prisma.user.findFirst({
@@ -300,13 +300,13 @@ export async function signUpUser(username: string, password: string) {
   }
 }
 
-export async function deleteAllUsers() {
-  await prisma.reputation.deleteMany({});
-  await prisma.comment.deleteMany({});
-  await prisma.userAuth.deleteMany({});
-  await prisma.user.deleteMany({});
-  return true;
-}
+// export async function deleteAllUsers() {
+//   await prisma.reputation.deleteMany({});
+//   await prisma.comment.deleteMany({});
+//   await prisma.userAuth.deleteMany({});
+//   await prisma.user.deleteMany({});
+//   return true;
+// }
 
 export async function findUserByName(username: string) {
   return await prisma.user.findUnique({

@@ -9,10 +9,10 @@
             <ul class="navbar-nav me-auto">
                 <li class="nav-item active"><a class="nav-link active" href="/">Home</a></li>
                 <!--<li class="nav-item"><a class="nav-link" href="#">Comments</a></li> -->
-                <% if (loggedIn) { %>
-                    <li class="nav-item active"><a class="nav-link" href="/">LoggedIn</a></li>
+                <% if (username) { %>
+                    <li class="nav-item active"><a class="nav-link" href="/">Logged In as <%= username %></a></li>
                 <% } else { %>
-                    <li class="nav-item active"><a class="nav-link" href="/">LoggedOut</a></li> 
+                    <li class="nav-item active"><a class="nav-link" href="/">Logged Out</a></li> 
                 <% } %> 
             </ul>
         </div>
