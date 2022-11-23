@@ -65,7 +65,7 @@ frontendRouter.get("/login", async (req, res) => {
 frontendRouter.post("/login", async (req, res) => {
   console.log("Logging in...");
   console.log(req.body);
-  if (req.body.username == "test") {
+  if (req.body.username == process.env.TEST_USER_NAME) {
     const payload = {
       username: req.body.username,
     };
