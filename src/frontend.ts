@@ -54,7 +54,8 @@ frontendRouter.post("/signup", async (req, res) => {
     res.json({ error: "Sign up failed." });
   } else {
     console.log("Signed up!");
-    res.json({ user });
+    console.log(user);
+    res.redirect("/");
   }
 });
 
