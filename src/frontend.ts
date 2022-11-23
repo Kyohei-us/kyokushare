@@ -18,27 +18,87 @@ frontendRouter.get("/", async (req, res) => {
 
   console.log(kyokus);
 
+  // Check if user is logged in
+  let username = "";
+  try {
+  const token = req.cookies["userjwt"];
+  if (!token) {
+    throw new Error("JWT not found in cookie");
+  }
+
+  const decoded = jwt.verify(token, process.env.JWT_SECRET ? process.env.JWT_SECRET : "");
+
+  if (typeof decoded === "string") {
+    username = decoded;
+  } else {
+    username = decoded.username;
+  }
+  } catch (e){
+    console.log(e);
+  }
+
   const data = {
     kyokus,
-    username: req.session.username,
+    username: username,
   };
   res.render("./index.ejs", data);
 });
 
 frontendRouter.get("/commentsByKyokuId/:id", async (req, res) => {
   const kyoku = await getKyokuFullInfoByKyokuId(Number(req.params.id));
+
+  // Check if user is logged in
+  let username = "";
+  try {
+  const token = req.cookies["userjwt"];
+  if (!token) {
+    throw new Error("JWT not found in cookie");
+  }
+
+  const decoded = jwt.verify(token, process.env.JWT_SECRET ? process.env.JWT_SECRET : "");
+
+  if (typeof decoded === "string") {
+    username = decoded;
+  } else {
+    username = decoded.username;
+  }
+  } catch (e){
+    console.log(e);
+  }
+
   const data = {
     kyoku,
     comments: kyoku?.comments,
-    username: req.session.username,
+    username: username,
   };
   res.render("./comments.ejs", data);
 });
 
 frontendRouter.get("/artist/:id", async (req, res) => {
   const artist = await getArtistById(Number(req.params.id));
+
+  // Check if user is logged in
+  let username = "";
+  try {
+  const token = req.cookies["userjwt"];
+  if (!token) {
+    throw new Error("JWT not found in cookie");
+  }
+
+  const decoded = jwt.verify(token, process.env.JWT_SECRET ? process.env.JWT_SECRET : "");
+
+  if (typeof decoded === "string") {
+    username = decoded;
+  } else {
+    username = decoded.username;
+  }
+  } catch (e){
+    console.log(e);
+  }
+  
   const data = {
     artist,
+    username: username
   };
   res.render("./artist.ejs", data);
 });
@@ -77,8 +137,7 @@ frontendRouter.post("/login", async (req, res) => {
     res.cookie('userjwt', token, {
       httpOnly: true
     })
-    req.session.username = req.body.username;
-    req.session.save();
+    // req.session.save();
     console.log("Test User Logged in!");
     res.redirect("/");
   } else {
@@ -108,8 +167,7 @@ frontendRouter.post("/login", async (req, res) => {
             payload,
             process.env.JWT_SECRET ? process.env.JWT_SECRET : ""
           );
-          req.session.username = req.body.username;
-          req.session.save();
+          // req.session.save();
           res.cookie('userjwt', token, {
             httpOnly: true
           });
@@ -125,9 +183,9 @@ frontendRouter.post("/login", async (req, res) => {
 });
 
 frontendRouter.get("/logout", function (req, res) {
-  if (req.session.username) {
-    req.session.username = "";
-    req.session.save();
+  if (req.cookies.username) {
+    req.cookies.username = "";
+    // req.session.save();
     console.log("logged out!");
     res.redirect("/login");
   }

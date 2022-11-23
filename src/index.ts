@@ -17,11 +17,11 @@ declare global {
   }
 }
 
-declare module 'express-session' {
-  interface SessionData {
-      username: string;
-  }
-}
+// declare module 'express-session' {
+//   interface SessionData {
+//       username: string;
+//   }
+// }
 
 const app = express();
 app.use(cors());
