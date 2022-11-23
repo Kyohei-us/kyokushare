@@ -183,10 +183,12 @@ frontendRouter.post("/login", async (req, res) => {
 });
 
 frontendRouter.get("/logout", function (req, res) {
-  if (req.cookies.username) {
-    req.cookies.username = "";
+  if (req.cookies["userjwt"]) {
+    res.clearCookie("userjwt");
     // req.session.save();
     console.log("logged out!");
+    res.redirect("/login");
+  } else {
     res.redirect("/login");
   }
 });
