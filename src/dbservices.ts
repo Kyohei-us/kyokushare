@@ -1,7 +1,34 @@
 import { PrismaClient, User } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { Request, Response, NextFunction } from "express";
+import jwt, {JwtPayload} from "jsonwebtoken";
 
 const prisma = new PrismaClient();
+
+export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // const bearToken = req.headers["authorization"];
+    // const bearer = bearToken?.split(" ");
+    // const token = bearer && bearer[1] ? bearer[1] : "";
+    const token = req.cookies["userjwt"];
+    if (!token) {
+      throw new Error("JWT not found in cookie");
+    }
+  
+    const decoded = jwt.verify(token, process.env.JWT_SECRET ? process.env.JWT_SECRET : "");
+  
+    if (typeof decoded === "string") {
+      res.locals.username = decoded;
+    } else {
+      res.locals.username = decoded.username;
+    }
+    console.log(`Username: ${decoded}`);
+    next();
+  } catch (e) {
+    res.status(401);
+    res.json({message: "Not authenticated."});
+  }
+}
 
 // Read
 export async function getAllKyokus(skip?: number, take?: number) {
@@ -35,7 +62,8 @@ export async function getKyokusByArtistId(artistId: number) {
 // Create? Kyoku
 export async function createKyokuIfNotExists(
   title: string,
-  artist_name: string
+  artist_name: string,
+  userId: number
 ) {
   const artist = await prisma.artist.findFirst({
     where: {
@@ -61,6 +89,7 @@ export async function createKyokuIfNotExists(
       data: {
         title: title,
         artistId: artist.id,
+        userId,
       },
     });
     return kyoku;
@@ -75,6 +104,7 @@ export async function createKyokuIfNotExists(
       data: {
         title: title,
         artistId: artist.id,
+        userId,
       },
     });
     return kyoku;

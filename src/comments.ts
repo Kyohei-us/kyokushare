@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addComment, addCommentByKyokuId, getAllComments, incrementReputationByCommentId } from "./dbservices";
+import { addComment, addCommentByKyokuId, getAllComments, incrementReputationByCommentId, isAuthenticated } from "./dbservices";
 
 const commentsRouter = Router();
 
@@ -17,7 +17,7 @@ commentsRouter.get("/", async (req, res) => {
 * try to add comment by title and name
 * else Invalid request
 */
-commentsRouter.post("/", async (req, res) => {
+commentsRouter.post("/", isAuthenticated, async (req, res) => {
   if (req.body.author_name && req.body.kyoku_id && req.body.body) {
     const response = await addCommentByKyokuId(
       req.body.author_name,

@@ -16,10 +16,11 @@ frontendRouter.get("/", async (req, res) => {
   const take = req.query.take ? Number(req.query.take) : undefined;
   const kyokus = await getAllKyokus(skip, take);
 
+  console.log(kyokus);
+
   const data = {
     kyokus,
     username: req.session.username,
-    token: req.session.token,
   };
   res.render("./index.ejs", data);
 });
@@ -30,7 +31,6 @@ frontendRouter.get("/commentsByKyokuId/:id", async (req, res) => {
     kyoku,
     comments: kyoku?.comments,
     username: req.session.username,
-    token: req.session.token,
   };
   res.render("./comments.ejs", data);
 });
@@ -73,7 +73,9 @@ frontendRouter.post("/login", async (req, res) => {
       payload,
       process.env.JWT_SECRET ? process.env.JWT_SECRET : ""
     );
-    req.session.token = token;
+    res.cookie('userjwt', token, {
+      httpOnly: true
+    })
     req.session.username = req.body.username;
     req.session.save();
     console.log("Test User Logged in!");
@@ -105,9 +107,11 @@ frontendRouter.post("/login", async (req, res) => {
             payload,
             process.env.JWT_SECRET ? process.env.JWT_SECRET : ""
           );
-          req.session.token = token;
           req.session.username = req.body.username;
           req.session.save();
+          res.cookie('userjwt', token, {
+            httpOnly: true
+          });
           console.log("Logged in!");
           res.redirect("/");
         }

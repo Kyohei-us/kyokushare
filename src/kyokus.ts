@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { createKyokuIfNotExists, getAllKyokus, getKyokusByArtistId } from "./dbservices";
+import { isAuthenticated } from "./dbservices";
+import { createKyokuIfNotExists, findUserByName, getAllKyokus, getKyokusByArtistId } from "./dbservices";
 
 const kyokusRouter = Router();
 
@@ -15,7 +16,7 @@ kyokusRouter.get("/", async (req, res) => {
 });
 
 // Create Kyoku
-kyokusRouter.post("/", async (req, res) => {
+kyokusRouter.post("/", isAuthenticated, async (req, res) => {
   if (!req.body.title || !req.body.artist_name) {
     res.json({ message: "Invalid request body parameter" });
   }
@@ -24,8 +25,13 @@ kyokusRouter.post("/", async (req, res) => {
     res.json({ message: "Invalid request body parameter" });
   }
 
-  const kyoku = await createKyokuIfNotExists(req.body.title, req.body.artist_name);
-  res.json(kyoku);
+  const user = await findUserByName(res.locals.username);
+  if (!user) {
+    res.json({message: "This user is invalid."})
+  } else {
+    const kyoku = await createKyokuIfNotExists(req.body.title, req.body.artist_name, user.id);
+    res.json(kyoku);
+  }
 });
 
 export default kyokusRouter;
