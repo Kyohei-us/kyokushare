@@ -1,0 +1,6 @@
+<!-- Left side bar -->
+<div class="col-sm-2 sidenav list-group border-0 rounded-0 min-vh-100">
+    <% artists.forEach(artist => { %> 
+        <p class="list-group-item"><a href="/artist/<%= artist.id %>"><%= artist.name %></a></p>
+    <% }) %> 
+</div>
