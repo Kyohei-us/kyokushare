@@ -1,45 +1,63 @@
-import { Router } from "express";
+import { Request, Router } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import {
   findUserByName,
   getAllKyokus,
   getArtistById,
+  geteAllArtists,
   getKyokuFullInfoByKyokuId,
   signUpUser,
 } from "./dbservices";
 
 const frontendRouter = Router();
 
+/**
+ * Return username if logged in.
+ * Otherwise return empty string.
+ * @param req: Request
+ * @returns username: string
+ */
+function getUsernameIfLoggedIn(req: Request): string {
+  try {
+    const token = req.cookies["userjwt"];
+    if (!token) {
+      console.log("JWT not found in cookie.");
+      return "";
+    } 
+
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET ? process.env.JWT_SECRET : ""
+    );
+
+    if (typeof decoded === "string") {
+      return decoded;
+    } else {
+      return decoded.username;
+    }
+  } catch (e) {
+    console.log(e);
+    return "";
+  }
+}
+
 frontendRouter.get("/", async (req, res) => {
   const skip = req.query.skip ? Number(req.query.skip) : 0;
   const take = req.query.take ? Number(req.query.take) : undefined;
   const kyokus = await getAllKyokus(skip, take);
 
+  const artists = await geteAllArtists();
+
   console.log(kyokus);
 
   // Check if user is logged in
-  let username = "";
-  try {
-  const token = req.cookies["userjwt"];
-  if (!token) {
-    throw new Error("JWT not found in cookie");
-  }
-
-  const decoded = jwt.verify(token, process.env.JWT_SECRET ? process.env.JWT_SECRET : "");
-
-  if (typeof decoded === "string") {
-    username = decoded;
-  } else {
-    username = decoded.username;
-  }
-  } catch (e){
-    console.log(e);
-  }
+  let username = getUsernameIfLoggedIn(req);
 
   const data = {
     kyokus,
     username: username,
+    artists,
   };
   res.render("./index.ejs", data);
 });
@@ -48,23 +66,7 @@ frontendRouter.get("/commentsByKyokuId/:id", async (req, res) => {
   const kyoku = await getKyokuFullInfoByKyokuId(Number(req.params.id));
 
   // Check if user is logged in
-  let username = "";
-  try {
-  const token = req.cookies["userjwt"];
-  if (!token) {
-    throw new Error("JWT not found in cookie");
-  }
-
-  const decoded = jwt.verify(token, process.env.JWT_SECRET ? process.env.JWT_SECRET : "");
-
-  if (typeof decoded === "string") {
-    username = decoded;
-  } else {
-    username = decoded.username;
-  }
-  } catch (e){
-    console.log(e);
-  }
+  let username = getUsernameIfLoggedIn(req);
 
   const data = {
     kyoku,
@@ -78,27 +80,11 @@ frontendRouter.get("/artist/:id", async (req, res) => {
   const artist = await getArtistById(Number(req.params.id));
 
   // Check if user is logged in
-  let username = "";
-  try {
-  const token = req.cookies["userjwt"];
-  if (!token) {
-    throw new Error("JWT not found in cookie");
-  }
+  let username = getUsernameIfLoggedIn(req);
 
-  const decoded = jwt.verify(token, process.env.JWT_SECRET ? process.env.JWT_SECRET : "");
-
-  if (typeof decoded === "string") {
-    username = decoded;
-  } else {
-    username = decoded.username;
-  }
-  } catch (e){
-    console.log(e);
-  }
-  
   const data = {
     artist,
-    username: username
+    username: username,
   };
   res.render("./artist.ejs", data);
 });
@@ -134,9 +120,9 @@ frontendRouter.post("/login", async (req, res) => {
       payload,
       process.env.JWT_SECRET ? process.env.JWT_SECRET : ""
     );
-    res.cookie('userjwt', token, {
-      httpOnly: true
-    })
+    res.cookie("userjwt", token, {
+      httpOnly: true,
+    });
     // req.session.save();
     console.log("Test User Logged in!");
     res.redirect("/");
@@ -168,8 +154,8 @@ frontendRouter.post("/login", async (req, res) => {
             process.env.JWT_SECRET ? process.env.JWT_SECRET : ""
           );
           // req.session.save();
-          res.cookie('userjwt', token, {
-            httpOnly: true
+          res.cookie("userjwt", token, {
+            httpOnly: true,
           });
           console.log("Logged in!");
           res.redirect("/");

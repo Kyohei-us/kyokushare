@@ -1,7 +1,7 @@
 import { PrismaClient, User } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { Request, Response, NextFunction } from "express";
-import jwt, {JwtPayload} from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -378,6 +378,11 @@ async function incrementReputationById(reputationId: number) {
   });
 
   return reputation;
+}
+
+export async function geteAllArtists() {
+  const artists = await prisma.artist.findMany({});
+  return artists;
 }
 
 export async function getArtistById(artistId: number) {
