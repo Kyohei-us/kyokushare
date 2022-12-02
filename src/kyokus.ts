@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { isAuthenticated } from "./dbservices";
-import { createKyokuIfNotExists, findUserByName, getAllKyokus, getKyokusByArtistId } from "./dbservices";
+import { findUserByName } from "./dbservices";
+import { getKyokusByArtistId, getAllKyokus, createKyokuIfNotExists } from "./kyokuService";
 
 const kyokusRouter = Router();
 

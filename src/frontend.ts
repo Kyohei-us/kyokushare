@@ -3,12 +3,11 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import {
   findUserByName,
-  getAllKyokus,
   getArtistById,
   geteAllArtists,
-  getKyokuFullInfoByKyokuId,
   signUpUser,
 } from "./dbservices";
+import { getAllKyokus, getKyokuFullInfoByKyokuId } from "./kyokuService";
 
 const frontendRouter = Router();
 

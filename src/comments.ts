@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { addComment, addCommentByKyokuId, getAllComments, incrementReputationByCommentId, isAuthenticated } from "./dbservices";
+import { getAllComments, addCommentByKyokuId, addComment } from "./commentService";
+import { incrementReputationByCommentId, isAuthenticated } from "./dbservices";
 
 const commentsRouter = Router();
 
