@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { getAllComments, addCommentByKyokuId, addComment } from "./commentService";
-import { incrementReputationByCommentId, isAuthenticated } from "./dbservices";
+import { incrementReputationByCommentId } from "./dbservices";
+import { isAuthenticated } from "./userAuthService";
 
 const commentsRouter = Router();
 
@@ -19,21 +20,21 @@ commentsRouter.get("/", async (req, res) => {
 * else Invalid request
 */
 commentsRouter.post("/", isAuthenticated, async (req, res) => {
-  if (req.body.author_name && req.body.kyoku_id && req.body.body) {
+  if (res.locals.email && req.body.kyoku_id && req.body.body) {
     const response = await addCommentByKyokuId(
-      req.body.author_name,
+      res.locals.email,
       Number(req.body.kyoku_id),
       req.body.body
     );
     res.json(response);
   } else if (
-    req.body.author_name &&
+    req.body.email &&
     req.body.kyoku_title &&
     req.body.artist_name &&
     req.body.body
   ) {
     const response = await addComment(
-      req.body.author_name,
+      req.body.email,
       req.body.kyoku_title,
       req.body.artist_name,
       req.body.body

@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { findAuthor } from "./dbservices";
+import { findAuthorByEmail } from "./dbservices";
 
 const prisma = new PrismaClient();
 
@@ -54,7 +54,7 @@ export async function getCommentsByKyokuId(id: number) {
 // Create? Comment
 // Create? Reputation
 export async function addComment(
-  author_name: string,
+  author_email: string,
   kyoku_title: string,
   artist_name: string,
   body: string
@@ -74,9 +74,9 @@ export async function addComment(
   }
 
   // get author (User)
-  const author = await findAuthor(author_name);
+  const author = await findAuthorByEmail(author_email);
   if (!author) {
-    return { message: "Author with the name not found" };
+    return { message: "Author with the email not found" };
   }
 
   // create comment
@@ -109,7 +109,7 @@ export async function addComment(
 // Create? Comment
 // Create? Reputation
 export async function addCommentByKyokuId(
-  author_name: string,
+  author_email: string,
   kyoku_id: number,
   body: string
 ) {
@@ -125,9 +125,9 @@ export async function addCommentByKyokuId(
   }
 
   // get author (User)
-  const author = await findAuthor(author_name);
+  const author = await findAuthorByEmail(author_email);
   if (!author) {
-    return { message: "Author with the name not found" };
+    return { message: "Author with the email not found" };
   }
 
   // create comment

@@ -1,62 +1,52 @@
 import { PrismaClient, User } from "@prisma/client";
 import bcrypt from "bcrypt";
-import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
-export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-  try {
-    // const bearToken = req.headers["authorization"];
-    // const bearer = bearToken?.split(" ");
-    // const token = bearer && bearer[1] ? bearer[1] : "";
-    const token = req.cookies["userjwt"];
-    if (!token) {
-      throw new Error("JWT not found in cookie");
-    }
-  
-    const decoded = jwt.verify(token, process.env.JWT_SECRET ? process.env.JWT_SECRET : "");
-  
-    if (typeof decoded === "string") {
-      res.locals.username = decoded;
-    } else {
-      res.locals.username = decoded.username;
-    }
-    console.log(`Username: ${decoded}`);
-    next();
-  } catch (e) {
-    res.status(401);
-    res.json({message: "Not authenticated."});
-  }
-}
-
 // Read User
-export async function findAuthor(
-  author_name: string
-): Promise<User | undefined> {
-  const author = await prisma.user.findFirst({
+// export async function findAuthor(
+//   author_name: string
+// ): Promise<User | undefined> {
+//   const author = await prisma.user.findFirst({
+//     where: {
+//       name: author_name,
+//     },
+//   });
+//   if (author) {
+//     return author;
+//   } else {
+//     return undefined;
+//   }
+// }
+
+export async function findAuthorByEmail(email: string) {
+  const userAuth = await prisma.userAuth.findUnique({
     where: {
-      name: author_name,
+      email,
     },
+    include: {
+      user: true
+    }
   });
-  if (author) {
-    return author;
+  if (userAuth && userAuth.user) {
+    return userAuth.user;
   } else {
-    return undefined;
+    return null;
   }
 }
 
-export async function signUpUser(username: string, password: string) {
+export async function signUpUser(email: string, password: string, username?: string) {
   const saltRounds = 5;
   try {
     const user = await prisma.user.create({
       data: {
-        name: username,
+        name: username ? username : "",
       },
     });
     const userAuth = await prisma.userAuth.create({
       data: {
         userId: user.id,
+        email: email,
         hashedPassword: bcrypt.hashSync(password, saltRounds),
       },
     });
@@ -83,14 +73,35 @@ export async function signUpUser(username: string, password: string) {
 //   return true;
 // }
 
-export async function findUserByName(username: string) {
+// export async function findUserByName(username: string) {
+//   return await prisma.user.findUnique({
+//     where: {
+//       name: username,
+//     },
+//     include: {
+//       userAuth: true,
+//     },
+//   });
+// }
+
+export async function findUserByEmail(email: string) {
+  const userAuth = await prisma.userAuth.findUnique({
+    where: {
+      email
+    },
+  });
+
+  if (!userAuth) {
+    return null;
+  }
+
   return await prisma.user.findUnique({
     where: {
-      name: username,
+      id: userAuth.userId
     },
     include: {
-      userAuth: true,
-    },
+      userAuth: true
+    }
   });
 }
 

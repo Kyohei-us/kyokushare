@@ -1,45 +1,16 @@
-import { Request, Router } from "express";
+import { Router } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import {
-  findUserByName,
+  findUserByEmail,
   getArtistById,
   geteAllArtists,
   signUpUser,
 } from "./dbservices";
 import { getAllKyokus, getKyokuFullInfoByKyokuId } from "./kyokuService";
+import { getUsernameIfLoggedIn, getEmailIfLoggedIn } from "./userAuthService";
 
 const frontendRouter = Router();
-
-/**
- * Return username if logged in.
- * Otherwise return empty string.
- * @param req: Request
- * @returns username: string
- */
-function getUsernameIfLoggedIn(req: Request): string {
-  try {
-    const token = req.cookies["userjwt"];
-    if (!token) {
-      console.log("JWT not found in cookie.");
-      return "";
-    } 
-
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET ? process.env.JWT_SECRET : ""
-    );
-
-    if (typeof decoded === "string") {
-      return decoded;
-    } else {
-      return decoded.username;
-    }
-  } catch (e) {
-    console.log(e);
-    return "";
-  }
-}
 
 frontendRouter.get("/", async (req, res) => {
   const skip = req.query.skip ? Number(req.query.skip) : 0;
@@ -52,10 +23,12 @@ frontendRouter.get("/", async (req, res) => {
 
   // Check if user is logged in
   let username = getUsernameIfLoggedIn(req);
+  let email = getEmailIfLoggedIn(req);
 
   const data = {
     kyokus,
     username: username,
+    email: email,
     artists,
   };
   res.render("./index.ejs", data);
@@ -66,11 +39,13 @@ frontendRouter.get("/commentsByKyokuId/:id", async (req, res) => {
 
   // Check if user is logged in
   let username = getUsernameIfLoggedIn(req);
+  let email = getEmailIfLoggedIn(req);
 
   const data = {
     kyoku,
     comments: kyoku?.comments,
     username: username,
+    email: email,
   };
   res.render("./comments.ejs", data);
 });
@@ -80,10 +55,12 @@ frontendRouter.get("/artist/:id", async (req, res) => {
 
   // Check if user is logged in
   let username = getUsernameIfLoggedIn(req);
+  let email = getEmailIfLoggedIn(req);
 
   const data = {
     artist,
     username: username,
+    email: email,
   };
   res.render("./artist.ejs", data);
 });
@@ -92,7 +69,7 @@ frontendRouter.post("/signup", async (req, res) => {
   console.log("signing up...");
   console.log(req.body);
 
-  const user = await signUpUser(req.body.username, req.body.password);
+  const user = await signUpUser(req.body.email, req.body.password, req.body.username);
 
   if (user === "error") {
     console.log("Sign up failed.");
@@ -126,7 +103,8 @@ frontendRouter.post("/login", async (req, res) => {
     console.log("Test User Logged in!");
     res.redirect("/");
   } else {
-    let user = await findUserByName(req.body.username);
+    let user = await findUserByEmail(req.body.email);
+    console.log(user);
     if (user) {
       // Begin password comparison
       bcrypt.compare(
@@ -147,6 +125,7 @@ frontendRouter.post("/login", async (req, res) => {
           }
           const payload = {
             username: req.body.username,
+            email: req.body.email,
           };
           const token = jwt.sign(
             payload,

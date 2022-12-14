@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { isAuthenticated } from "./dbservices";
-import { findUserByName } from "./dbservices";
+import { findUserByEmail } from "./dbservices";
 import { getKyokusByArtistId, getAllKyokus, createKyokuIfNotExists } from "./kyokuService";
+import { isAuthenticated } from "./userAuthService";
 
 const kyokusRouter = Router();
 
@@ -26,7 +26,7 @@ kyokusRouter.post("/", isAuthenticated, async (req, res) => {
     res.json({ message: "Invalid request body parameter" });
   }
 
-  const user = await findUserByName(res.locals.username);
+  const user = await findUserByEmail(res.locals.email);
   if (!user) {
     res.json({message: "This user is invalid."})
   } else {

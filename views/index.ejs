@@ -50,7 +50,7 @@
 
 <body>
     <!-- Navbar -->
-    <%- include('component/navbar.ejs', {username})  %> 
+    <%- include('component/navbar.ejs', {username, email})  %> 
 
     <!-- Main contents -->
     <div class="container-fluid text-center">
@@ -138,7 +138,7 @@
           <!-- Right side bar -->
           <div class="col-sm-2 sidenav">
             <div>
-                <% if (username) { %> 
+                <% if (email) { %> 
                 <div class="bg-light">
                     <div class="mb-3 mx-auto w-50">
                         <label for="kyokuTitleInput" class="form-label">曲のタイトル</label>

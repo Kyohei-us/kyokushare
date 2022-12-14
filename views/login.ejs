@@ -45,8 +45,8 @@
         <div class="col-sm-6">
             <form method="post" action="/login">
                 <div class="mb-3">
-                    <label for="login_username" class="form-label">Username</label>
-                    <input name="username" id="login_username" class="form-control" type="text" />
+                    <label for="login_email" class="form-label">Email</label>
+                    <input name="email" id="login_email" class="form-control" type="text" />
                 </div>
                 <div class="mb-3">
                     <label for="login_password" class="form-label">Password</label>
@@ -59,6 +59,10 @@
 
         <div class="col-sm-6">
             <form method="post" action="/signup">
+                <div class="mb-3">
+                    <label for="signup_email" class="form-label">Email</label>
+                    <input name="email" id="signup_email" class="form-control" type="text" />
+                </div>
                 <div class="mb-3">
                     <label for="signup_username" class="form-label">Username</label>
                     <input name="username" id="signup_username" class="form-control" type="text" />

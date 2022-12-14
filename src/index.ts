@@ -1,21 +1,12 @@
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import kyokusRouter from "./kyokus";
 import commentsRouter from "./comments";
 import frontendRouter from "./frontend";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { isAuthenticated } from "./dbservices";
+import { isAuthenticated } from "./userAuthService";
 // import { deleteAllUsers } from "./dbservices";
-
-declare global {
-  namespace Express {
-    interface User {
-      username: string;
-      password: string;
-    }
-  }
-}
 
 // declare module 'express-session' {
 //   interface SessionData {
@@ -48,6 +39,8 @@ app.use("/", frontendRouter);
 app.get("/isLoggedIn", isAuthenticated, async (req, res) => {
   const username = res.locals.username;
   console.log(`${username} is now logged in!`);
+  const email = res.locals.email;
+  console.log(`${email} is now logged in!`);
   res.json({message: "You are logged in!"})
 })
 
